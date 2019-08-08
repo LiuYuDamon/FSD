@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Player</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="player.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="jquery-3.4.1.min.js"></script>
+</head>
+<body style="background-color:#000000">
+	<div class="row">
+		<div class="col-lg-6">
+			<video id="player" width="600px" loop>
+		  		<source id="videoSource" src="mov_bbb.mp4" type="video/mp4">
+			</video>
+			<div width="600px">
+				<button class="button" id="play" onclick="videoPlay()"><span class="glyphicon glyphicon-play"></span></button>
+				<button class="button" id="pause" onclick="videoPause()" disabled>
+					<span class="glyphicon glyphicon-pause"></span>
+				</button>
+				<button class="button" id="plus" onclick="plus()"><span class="glyphicon glyphicon-plus"></span></button>
+				<button class="button" id="minus" onclick="minus()"><span class="glyphicon glyphicon-minus"></span></button>
+				<button class="button" id="stop" onclick="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+				<button class="button" id="headphones" onclick="headphones()">
+					<span id="mutedControls" class="glyphicon glyphicon-volume-up"></span>
+				</button>
+				<span id="like" class="glyphicon glyphicon-thumbs-up" onclick="like()" style="display:inline-block;color: #fff;cursor: pointer;"></span>
+				<span id="unLike" class="glyphicon glyphicon-thumbs-down" onclick="unLike()" style="display:inline-block;color: #fff;cursor: pointer;"></span>
+				<progress id="videoProgess" value="0" ></progress>
+				<span id="videoTime" style="color: #fff">00:00:00/00:00:00</span>
+			</div>
+			
+	   </div>
+	   <div class="col-lg-6" style="color: #fff; padding-top: 70px">
+			<ul class="videoList" style="list-style:none;">
+				<li value="mov_bbb.mp4">Introduction to HTML5</li>
+				<li value="movie.mp4">Introduction to Styling with CSS3</li>
+				<li value="mov_bbb.mp4">Introduction to Bootstrap 4</li>
+				<li value="movie.mp4">Learn to create website with HTML5, CSS3 and Bootstrap4</li>
+				<li value="mov_bbb.mp4">Introduction to Javascript</li>
+			</ul>
+	   </div>
+   </div>
+
+  <script type="text/javascript">
+	var myVideo = document.getElementById("player");
+	var play = document.getElementById("play");
+	var pause = document.getElementById("pause");
+	var mutedControls = document.getElementById("mutedControls");
+	var likeCount = document.getElementById("like");
+	var unLikeCount = document.getElementById("unLike");
+	var videoProgess = document.getElementById("videoProgess");
+	var videoTime = document.getElementById("videoTime");
+	var videoSource = document.getElementById("videoSource");
+
+	$("li").click(function(){
+		myVideo.setAttribute("src",this.getAttribute("value"))
+		myVideo.load();
+		pause.setAttribute("disabled",true);
+		play.removeAttribute("disabled");
+		videoTime.innerText =  getFormatTime(myVideo.currentTime)+"/" + getFormatTime(myVideo.duration);
+	});
+
+
+	myVideo.onloadedmetadata=function(){
+	    videoTime.innerText =  getFormatTime(myVideo.currentTime)+"/" + getFormatTime(myVideo.duration);
+	}
+
+	window.onload = function(){
+		likeCount.innerText = localStorage.like;
+		unLikeCount.innerText = localStorage.unLike;
+	};
+
+  	function videoPlay(){
+		if (myVideo.paused){
+			myVideo.play();
+			play.setAttribute("disabled",true);
+			pause.removeAttribute("disabled");
+		}
+	};
+
+	function videoPause(){
+		if (!myVideo.paused){
+			myVideo.pause();
+			pause.setAttribute("disabled",true);
+			play.removeAttribute("disabled");
+		}
+	};
+	function plus(){
+		var volume = myVideo.volume
+		if(volume>=0&&volume<=0.9){
+			myVideo.volume = volume+0.1;
+			myVideo.muted = false;
+		}
+	};
+	function minus(){
+		var volume = myVideo.volume
+		if(volume>=0.1&&volume<=1){
+			myVideo.volume = volume-0.1;
+			myVideo.muted = false;
+		}
+	};
+	function stop(){
+		myVideo.currentTime = 0 ;
+		if(myVideo.paused){
+			pause.setAttribute("disabled",true);
+			play.removeAttribute("disabled");
+		}else{
+			play.setAttribute("disabled",true);
+			pause.removeAttribute("disabled");
+		}
+	};
+	function headphones(){
+		if(myVideo.muted){
+			myVideo.muted=false;
+			mutedControls.classList.remove("glyphicon-volume-off");
+			mutedControls.classList.add("glyphicon-volume-up");
+		}
+		else{
+			myVideo.muted=true;
+			mutedControls.classList.remove("glyphicon-volume-up");
+			mutedControls.classList.add("glyphicon-volume-off");
+		}
+	};
+	function like(){
+		if (localStorage.like){
+			localStorage.like = Number(localStorage.like) + 1;
+		 }
+		else{
+			localStorage.like = 1;
+		}
+		likeCount.innerText = localStorage.like;
+	};
+
+	function unLike(){
+		if (localStorage.unLike){
+			localStorage.unLike = Number(localStorage.unLike) + 1;
+		 }
+		else{
+			localStorage.unLike = 1;
+		}
+		unLikeCount.innerText = localStorage.unLike;
+	};
+
+	//播放进度
+	myVideo.ontimeupdate = function(){
+	    if(myVideo.duration){
+	    	console.log(myVideo.duration);
+	    	videoProgess.value = myVideo.currentTime/myVideo.duration;
+			videoTime.innerText =  getFormatTime(myVideo.currentTime)+"/" + getFormatTime(myVideo.duration);
+	    }
+	};
+
+	function getFormatTime(time) {
+
+        var h = parseInt(time/3600),
+            m = parseInt(time%3600/60),
+            s = parseInt(time%60);
+        h = h < 10 ? "0"+h : h;
+        m = m < 10 ? "0"+m : m;
+        s = s < 10 ? "0"+s : s;
+
+        return h+":"+m+":"+s;
+    }
+
+  </script>
+	
+</body>
+</html>
