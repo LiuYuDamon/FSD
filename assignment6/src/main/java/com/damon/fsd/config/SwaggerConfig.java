@@ -20,7 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnablePluginRegistries(value = SpringGroupingStrategy.class)
 public class SwaggerConfig {
 
-    private final String basePackage = "com.jzm.api";
+    private final String basePackage = "com.damon.fsd.controller";
 
     /**
      * swagger2的配置文件，这里可以配置swagger2的一些基本的内容，比如扫描的包等等
