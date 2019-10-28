@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+    <script src="./jquery.min.js"></script>
+</head>
+<body>
+
+<table>
+    <tr>
+        <td>
+            User Name :
+        </td>
+        <td>
+            <input type="text" id="username"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Password :
+        </td>
+        <td>
+            <input type="password" id="password"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img src="/api/v1/captcha.jpg"  id="captcha" style="width: 100px;" onclick="refresh()" >
+        </td>
+        <td>
+            <input type="text" id="kaptcha"/>
+        </td>
+    </tr>
+    <tr>
+        <td><input type="button" value="Register" onclick="register()"/>
+        </td>
+        <td><input type="button" value="To Sign In" onclick="toLogin()"/>
+        </td>
+    </tr>
+</table>
+<script>
+    $(document).ready(function(){
+
+    })
+    function refresh() {
+        $("#captcha").attr("src","/api/v1/captcha.jpg?t=" + new Date().getMilliseconds());
+    }
+    function toLogin(){
+        window.location.href="/login.html";
+    }
+    function register(){
+        var list = {
+          "kaptcha": $("#kaptcha").val(),
+          "password": $("#password").val(),
+          "name": $("#username").val()
+        };
+        $.ajax({
+            type : "POST",
+            contentType: "application/json;charset=UTF-8",
+            url : "/api/v1/sign",
+            data : JSON.stringify(list),
+            success : function(result) {
+                refresh();
+                if(result.code == 200){
+                    alert(result.msg);
+                }else{
+                    alert(result.data);
+                }
+                console.log(result);
+            },
+            error : function(e){
+                refresh();
+                console.log(e.status);
+                console.log(e.responseText);
+            }
+        });
+    }
+</script>
+</body>
+</html>
